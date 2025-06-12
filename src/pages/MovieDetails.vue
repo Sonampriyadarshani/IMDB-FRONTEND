@@ -206,4 +206,88 @@ onMounted(fetchMovieDetails);
   />
 </template>
 
-<style scoped></style>
+<style scoped>
+/* Container */
+div[v-if="movie"] {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+}
+
+/* Movie Cover */
+img {
+  width: 50%;
+  max-height: 400px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+/* Buttons */
+button {
+  margin: 6px 6px 6px 0;
+  padding: 8px 14px;
+  font-size: 14px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Special buttons */
+button:nth-of-type(2) {
+  background-color: #dc3545;
+}
+button:nth-of-type(3) {
+  background-color: #ffc107;
+  color: #000;
+}
+.edit-cover button:last-of-type {
+  background-color: #6c757d;
+}
+
+/* Edit Section */
+.edit-cover {
+  margin-top: 10px;
+}
+
+.edit-cover input[type="file"] {
+  margin-bottom: 8px;
+}
+
+/* Title */
+h1 {
+  font-size: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+h1 input {
+  font-size: 16px;
+  padding: 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* Text */
+p {
+  font-size: 14px;
+  color: #333;
+  margin: 8px 0;
+}
+
+label {
+  cursor: pointer;
+  font-size: 18px;
+}
+</style>

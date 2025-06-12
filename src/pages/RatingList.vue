@@ -93,6 +93,29 @@ async function setRating() {
     toast.error("Error: " + error.message);
   }
 }
+
+// Delete movie cover
+async function deleteRating(rating) {
+  if (!confirm("Are you sure you want to delete the rating page?")) return;
+
+  const backend = import.meta.env.VITE_BACKEND;
+  const token = localStorage.getItem("token");
+
+  const res = await fetch(`${backend}/ratings/${rating.id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  const json = await res.json();
+  if (!res.ok) {
+    toast.error(json.message || "Failed to delete cover");
+    return;
+  }
+  toast.success("Rating deleted!");
+  ratings.value = ratings.value.filter((e) => e.id !== rating.id);
+  count.value--;
+}
 watch(selectedRating, fetchRating);
 onMounted(() => {
   let token = localStorage.getItem("token");
@@ -140,50 +163,61 @@ onMounted(() => {
     <!-- Ratings List -->
     <div class="ratings-list">
       <div class="rating-card" v-for="rating in ratings" :key="rating.id">
+        <p>user:{{ rating.user }}</p>
         <p>
           <strong>Rating:</strong>
-          <span class="stars">
-            <span v-for="star in 5" :key="star">
-              {{ star <= rating.rating ? "★" : "☆" }}
-            </span>
-            <StarRating :rating />
-          </span>
+
+          <StarRating :rating="rating.rating" />
         </p>
         <p><strong>Review:</strong> {{ rating.review }}</p>
         <p>
           <strong>Created At:</strong> {{ moment(ratings.createdAt).fromNow() }}
         </p>
-        <div class="buttons">
-          <button
-            v-for="n of totalPages"
-            :class="{ active: n === page }"
-            @click="page = n"
-          >
-            {{ n }}
-          </button>
-        </div>
+        <button @click="deleteRating(rating)">❌</button>
       </div>
+    </div>
+    <div class="buttons">
+      <button
+        v-for="n of totalPages"
+        :class="{ active: n === page }"
+        @click="page = n"
+      >
+        {{ n }}
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-/* General container spacing */
+/* ===========================
+   General Container & Layout
+=========================== */
 .ratings-container {
-  padding: 20px 0;
-  border-top: 1px solid #ddd;
+  padding: 2rem 0;
   max-width: 800px;
   margin: 0 auto;
+  border-top: 1px solid #ddd;
 }
 
-/* Rating form styles */
+.RatingCount {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 20px;
+  padding: 0 40px;
+  flex-wrap: wrap;
+}
+
+/* ===========================
+   Rating Form
+=========================== */
 form {
-  margin: 20px auto;
-  padding: 20px;
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
   border: 1px solid #ccc;
   border-radius: 10px;
-  background: #f9f9f9;
-  max-width: 500px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -192,9 +226,9 @@ form div {
 }
 
 label {
-  font-weight: bold;
   display: block;
   margin-bottom: 5px;
+  font-weight: bold;
   color: #333;
 }
 
@@ -202,49 +236,47 @@ textarea {
   width: 100%;
   height: 80px;
   padding: 10px;
+  font-size: 14px;
   border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
-  resize: vertical;
   background-color: #fff;
+  resize: vertical;
   box-sizing: border-box;
 }
 
+/* Submit Button */
 button[type="submit"] {
   padding: 10px 18px;
+  font-size: 14px;
   background-color: #4caf50;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 14px;
+  transition: background-color 0.3s ease;
 }
 
 button[type="submit"]:hover {
   background-color: #45a049;
 }
 
-/* Star rating (form) */
-form .stars span {
-  font-size: 22px;
-  color: gold;
-  cursor: pointer;
-  margin-right: 3px;
-}
-
-/* Filter dropdown section */
+/* ===========================
+   Filter Section
+=========================== */
 .filter-section {
   margin: 10px 0;
 }
 
 select {
   padding: 6px 12px;
+  font-size: 14px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  font-size: 14px;
 }
 
-/* Rating card layout */
+/* ===========================
+   Ratings List
+=========================== */
 .ratings-list {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -252,27 +284,19 @@ select {
   margin-top: 20px;
 }
 
+/* Rating Card */
 .rating-card {
-  background: white;
+  padding: 16px;
+  background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
-  padding: 16px;
-  transition: transform 0.2s;
+  transition: transform 0.2s ease;
 }
 
 .rating-card:hover {
   transform: translateY(-4px);
 }
 
-/* Rating stars in each card */
-.stars {
-  color: #f5b301;
-  font-size: 18px;
-  margin-bottom: 8px;
-  display: inline-block;
-}
-
-/* Text styles */
 .rating-card p {
   margin: 8px 0;
   font-size: 14px;
@@ -280,7 +304,46 @@ select {
   line-height: 1.5;
 }
 
-/* Responsive spacing */
+/* Star Rating (inside cards or form) */
+.stars {
+  font-size: 18px;
+  color: #f5b301;
+  margin-bottom: 8px;
+}
+
+/* ===========================
+   Pagination Buttons
+=========================== */
+.buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.buttons button {
+  margin: 0 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  background-color: #eee;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.buttons button.active {
+  background-color: #4caf50;
+  color: white;
+  border-color: #4caf50;
+}
+
+.buttons button:hover {
+  background-color: #45a049;
+  color: white;
+}
+
+/* ===========================
+   Responsive Design
+=========================== */
 @media (max-width: 600px) {
   form,
   .ratings-container {
@@ -290,14 +353,5 @@ select {
   .rating-card {
     padding: 12px;
   }
-}
-.RatingCount {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  width: 100%;
-  padding: 0 40px;
-  flex-wrap: wrap;
 }
 </style>
