@@ -18,17 +18,21 @@ const id = props.movie.id;
         "
         alt="Movie Cover"
       />
+      <p class="movie-id">{{ props.movie.id }}</p>
+      <p class="movie-name">{{ props.movie.name }}</p>
+
+      <!-- ✅ Use StarRating component -->
+
+      <StarRating :rating="props.movie.rating" />
     </router-link>
-    <p class="movie-id">{{ props.movie.id }}</p>
-    <p class="movie-name">{{ props.movie.name }}</p>
-
-    <!-- ✅ Use StarRating component -->
-
-    <StarRating :rating="props.movie.rating" />
   </div>
 </template>
 
 <style scoped>
+a {
+  text-decoration: none;
+}
+
 .movie {
   width: 500px;
   box-shadow: 2px 2px 2px grey;

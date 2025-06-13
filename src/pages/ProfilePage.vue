@@ -4,8 +4,11 @@ import { nextTick, ref } from "vue";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
-const router = useRouter();
 
+import { useAppStore } from "../store/app.js";
+
+const router = useRouter();
+const app = useAppStore();
 onMounted(() => {
   let token = localStorage.getItem("token");
   if (!token) {
@@ -89,7 +92,7 @@ async function saveUserData() {
     const updatedData = {};
 
     if (isEditingEmail.value) {
-      updatedData.email = user.value.email;
+      updatedData.email = app.user.email;
     }
 
     if (showPasswordFields.value) {
@@ -171,12 +174,12 @@ async function deletePhoto() {
 </script>
 
 <template>
-  <div v-if="user" class="container">
+  <div v-if="app.user" class="container">
     <h2>User Profile</h2>
     <div>
       <img
         :src="
-          user.photo ??
+          app.user.photo ??
           'https://static.vecteezy.com/system/resources/previews/008/442/086/original/illustration-of-human-icon-user-symbol-icon-modern-design-on-blank-background-free-vector.jpg'
         "
         class="profile-pic"
@@ -197,7 +200,7 @@ async function deletePhoto() {
       <label>
         <strong
           >Name:
-          <span>{{ user.name || "N/A" }}</span>
+          <span>{{ app.user.name || "N/A" }}</span>
         </strong>
       </label>
 
@@ -209,7 +212,7 @@ async function deletePhoto() {
             <input ref="emailInput" v-model="user.email" type="email" />
           </template>
           <template v-else>
-            <span>{{ user.email || "N/A" }}</span>
+            <span>{{ app.user.email || "N/A" }}</span>
             <span class="icon-pencil" @click="editEmail">✏️</span>
           </template>
         </div>
@@ -245,7 +248,7 @@ async function deletePhoto() {
       <label>
         <strong>Gender:</strong>
         <div class="radio-group">
-          <label v-if="user.gender === 'male'" class="gender-option"
+          <label v-if="app.user.gender === 'male'" class="gender-option"
             >♂ Male</label
           >
           <label v-else class="gender-option">♀ Female </label>
@@ -253,7 +256,9 @@ async function deletePhoto() {
       </label>
 
       <!-- Created At -->
-      <p><strong>Created At:</strong> {{ moment(user.createdAt).fromNow() }}</p>
+      <p>
+        <strong>Created At:</strong> {{ moment(app.user.createdAt).fromNow() }}
+      </p>
 
       <button
         class="cancle-btn"

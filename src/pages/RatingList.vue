@@ -4,6 +4,9 @@ import moment from "moment/moment";
 import { useRouter, useRoute } from "vue-router";
 import { toast } from "vue3-toastify";
 import StarRating from "@/components/StarRating.vue";
+import { useAppStore } from "../store/app.js";
+
+const app = useAppStore();
 
 const router = useRouter();
 const route = useRoute();
@@ -129,7 +132,10 @@ onMounted(() => {
 
 <template>
   <!-- Rating Form -->
-  <form @submit.prevent="handleSubmit">
+  <form
+    @submit.prevent="handleSubmit"
+    v-if="ratings.every((e) => e.user !== app.user.id)"
+  >
     <div>
       <label>Your Rating:</label>
       <span>
@@ -163,17 +169,21 @@ onMounted(() => {
     <!-- Ratings List -->
     <div class="ratings-list">
       <div class="rating-card" v-for="rating in ratings" :key="rating.id">
-        <p>user:{{ rating.user }}</p>
-        <p>
+        <p><b>User:</b> {{ rating.user }}</p>
+        <p class="rating">
           <strong>Rating:</strong>
-
           <StarRating :rating="rating.rating" />
         </p>
         <p><strong>Review:</strong> {{ rating.review }}</p>
         <p>
           <strong>Created At:</strong> {{ moment(ratings.createdAt).fromNow() }}
         </p>
-        <button @click="deleteRating(rating)">❌</button>
+        <button
+          @click="deleteRating(rating)"
+          v-if="rating.user === app.user.id"
+        >
+          ❌
+        </button>
       </div>
     </div>
     <div class="buttons">

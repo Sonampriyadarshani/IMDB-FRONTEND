@@ -82,13 +82,15 @@ onMounted(() => {
     <h1>Home</h1>
 
     <form action="/create">
-      <button>Create Movie</button>
+      <button class="movieButton">Create Movie</button>
     </form>
   </div>
 
   <div class="movies-wrapper">
     <div class="top-controls">
-      <div class="movieCount">{{ count }} movies</div>
+      <div class="movieCount">
+        <b>{{ count }} movies</b>
+      </div>
       <div class="top-note">
         <label for="pageSize">Show per page:</label>
         <select id="pageSize" v-model="limit">
@@ -134,38 +136,107 @@ onMounted(() => {
 <style scoped>
 .header-bar {
   display: flex;
-  gap: 20px;
+  justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding: 0 40px;
+  padding: 20px 40px;
+  background: #f0f0f0;
+  border-bottom: 1px solid #ccc;
 }
+
 h1 {
-  text-align: center;
-  margin-bottom: 20px;
+  font-size: 2rem;
+  color: #333;
 }
 
-button {
-  padding: 10px 20px;
-  background-color: #007bff;
-  margin: 20px 5px;
-  color: white;
-  font-size: 1rem;
-  border: none;
-  border-radius: 6px;
+.movieButton {
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 40px 0 20px;
+}
+
+.buttons button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-
-  display: block;
+  transition: all 0.3s ease;
+  min-width: 40px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
+.buttons button:hover {
+  background-color: #e6f0ff;
+  border-color: #007bff;
+  color: #007bff;
+}
+
+.buttons button.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  border-color: #007bff;
+}
+
+.buttons button.active:hover {
   background-color: #0056b3;
+  border-color: #0056b3;
 }
 
 .movies-wrapper {
+  padding: 20px 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.top-controls {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
+  margin-bottom: 20px;
+  gap: 15px;
+}
+
+.movie-count {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+  flex: 1;
+}
+
+.top-note,
+.top-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: bold;
+}
+
+.top-controls .right-controls {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+input[type="text"],
+select {
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: auto;
+  min-width: 100px;
 }
 
 .movies {
@@ -173,44 +244,45 @@ button:hover {
   flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
-  margin-top: 30px;
 }
 
-.top-controls {
+.pagination {
   display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-  margin-bottom: 20px;
-  width: 100%;
-  padding: 0 40px;
+  justify-content: center; /* Center the buttons */
   flex-wrap: wrap;
+  gap: 12px; /* Gap between buttons */
+  margin: 40px 0 20px;
 }
 
-.top-note,
-.top-search {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+.pagination button {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  color: #333;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-width: 40px;
 }
-.buttons {
-  display: flex;
-  flex-wrap: wrap;
+
+.pagination button:hover {
+  background-color: #e6f0ff;
+  border-color: #007bff;
+  color: #007bff;
 }
-.active {
-  background-color: red;
-}
-.active:hover {
-  background-color: rgb(142, 30, 30);
-}
-.movieCount {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-  margin-bottom: 20px;
-  width: 100%;
-  padding: 0 40px;
-  flex-wrap: wrap;
+
+.pagination button.active {
+  background-color: #007bff;
+  color: #fff;
   font-weight: bold;
+  border: 1px solid #007bff;
+}
+
+.pagination button.active:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
 }
 </style>

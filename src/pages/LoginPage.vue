@@ -1,59 +1,58 @@
 <script setup>
-import {ref,onMounted} from 'vue'
+import { ref, onMounted } from "vue";
+import { useAppStore } from "../store/app.js";
+import { useRouter } from "vue-router";
+import { toast } from "vue3-toastify";
 
-import { useRouter } from 'vue-router';
-import { toast } from 'vue3-toastify';
+const app = useAppStore();
 
-
-
-onMounted(()=>{
-  let token = localStorage.getItem('token')
-  if(token){
-    router.push('/')
-    return
+onMounted(() => {
+  let token = localStorage.getItem("token");
+  if (token) {
+    router.push("/");
+    return;
   }
-})
+});
 
-const router = useRouter()
+const router = useRouter();
 
-const email=ref('')
-const password = ref('')
+const email = ref("");
+const password = ref("");
 
-async function Login(){
-  if(!email.value || !password.value){
-    toast.error('please enter all details')
-    return
+async function Login() {
+  if (!email.value || !password.value) {
+    toast.error("please enter all details");
+    return;
   }
-  const backend=import.meta.env.VITE_BACKEND
-  const res= await fetch (`${backend}/auth/login`,{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
+  const backend = import.meta.env.VITE_BACKEND;
+  const res = await fetch(`${backend}/auth/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-   body:JSON.stringify({
-    email:email.value,
-    password:password.value,
-   })
-  })
+    body: JSON.stringify({
+      email: email.value,
+      password: password.value,
+    }),
+  });
 
-  const json = await res.json()
-  if(!res.ok) {
-    toast.error(json.message)
-    return
+  const json = await res.json();
+  if (!res.ok) {
+    toast.error(json.message);
+    return;
   }
 
-  toast.success('User loggedin successfully');
-  localStorage.setItem("token",json.token)
-  
-  email.value = ''
-  password.value = ''
-  
-  await new Promise((res) => setTimeout(res, 2000))
+  toast.success("User loggedin successfully");
+  localStorage.setItem("token", json.token);
 
-  router.push('/')
+  app.fetchProfile();
+  email.value = "";
+  password.value = "";
+
+  await new Promise((res) => setTimeout(res, 2000));
+
+  router.push("/");
 }
-
-
 </script>
 
 <template>
@@ -62,10 +61,18 @@ async function Login(){
     <legend>Login Form</legend>
 
     <p>
-      <label>Email:<input type="email" v-model="email" placeholder="enter email"></label>
-
+      <label
+        >Email:<input type="email" v-model="email" placeholder="enter email"
+      /></label>
     </p>
-    <p><label>password:<input type="password" v-model="password" placeholder="enter password"></label></p>
+    <p>
+      <label
+        >password:<input
+          type="password"
+          v-model="password"
+          placeholder="enter password"
+      /></label>
+    </p>
     <button @click="Login">Login</button>
   </fieldset>
 </template>
@@ -115,7 +122,7 @@ input {
 }
 
 input:focus {
-  border-color: #007BFF;
+  border-color: #007bff;
   outline: none;
 }
 
@@ -123,7 +130,7 @@ button {
   width: 100%;
   padding: 10px;
   font-size: 1rem;
-  background-color:#218838;
+  background-color: #218838;
   color: white;
   border: none;
   border-radius: 6px;
@@ -135,4 +142,3 @@ button:hover {
   background-color: #218838;
 }
 </style>
-

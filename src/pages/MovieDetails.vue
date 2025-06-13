@@ -5,6 +5,9 @@ import { useRoute, useRouter } from "vue-router";
 import { toast } from "vue3-toastify";
 import StarRating from "../components/StarRating.vue";
 import RatingList from "./RatingList.vue";
+import { useAppStore } from "../store/app.js";
+
+const app = useAppStore();
 
 const route = useRoute();
 const router = useRouter();
@@ -170,10 +173,15 @@ onMounted(fetchMovieDetails);
         alt="cover"
       />
     </div>
-    <button v-if="!isEditingCover" @click="isEditingCover = true">
+    <button
+      v-if="!isEditingCover && app.user.id === movie.user"
+      @click="isEditingCover = true"
+    >
       Edit Cover
     </button>
-    <button @click="deleteMovie">DELETE MOVIE</button>
+    <button v-if="app.user.id === movie.user" @click="deleteMovie">
+      DELETE MOVIE
+    </button>
     <button v-if="isEditingCover" @click="deleteCover">Delete Cover</button>
     <div v-if="isEditingCover" class="edit-cover">
       <input
@@ -192,7 +200,11 @@ onMounted(fetchMovieDetails);
         <button @click="updateMovieName">Save</button>
         <button @click="isEditingName = false">Cancel</button>
       </span>
-      <label v-if="!isEditingName" @click="isEditingName = true">✏️</label>
+      <label
+        v-if="!isEditingName && app.user.id === movie.user"
+        @click="isEditingName = true"
+        >✏️</label
+      >
     </h1>
     <p>Movie ID: {{ movie.id }}</p>
     <p>Rating:<StarRating :rating="movie.rating" /></p>
